@@ -1,0 +1,3 @@
+bin/mcrouter usr/bin
+bin/mcpiper usr/bin
+debian/sysusers/mcrouter.conf usr/lib/sysusers.d
