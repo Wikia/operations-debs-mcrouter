@@ -1,4 +1,0 @@
-etc/mcrouter
-var/log/mcrouter
-var/spool/mcrouter
-var/lib/mcrouter
