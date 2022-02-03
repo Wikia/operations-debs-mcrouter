@@ -16,12 +16,43 @@ export CPPFLAGS="-I${install_dir}/include $CPPFLAGS"
 apt-get update
 
 # could create an image with these preloaded
-apt-get install -y autoconf binutils-dev bison cmake flex g++ gcc git \
-  libboost1.67-all-dev libbz2-dev libdouble-conversion-dev libevent-dev \
-  libgflags-dev libgoogle-glog-dev libjemalloc-dev liblz4-dev liblzma-dev \
-  liblzma5 libsnappy-dev libsodium-dev libssl-dev libtool libunwind8-dev \
-  libfmt-dev zlib1g-dev libzstd-dev make pkg-config python-dev python-six \
-  dpkg-dev debhelper ragel ca-certificates build-essential
+apt-get install -y \
+    autoconf \
+    binutils-dev \
+    bison \
+    cmake \
+    flex \
+    g++ \
+    gcc \
+    git \
+    libboost1.74-all-dev \
+    libbz2-dev \
+    libdouble-conversion-dev \
+    libevent-dev \
+    libgflags-dev \
+    libgtest-dev \
+    libgoogle-glog-dev \
+    libjemalloc-dev \
+    liblz4-dev \
+    liblzma-dev \
+    liblzma5 \
+    libsnappy-dev \
+    libsodium-dev \
+    libssl-dev \
+    libtool \
+    libunwind8-dev \
+    libfmt-dev \
+    zlib1g-dev \
+    libzstd-dev \
+    make \
+    pkg-config \
+    python-dev \
+    python-six \
+    dpkg-dev \
+    debhelper \
+    ragel \
+    ca-certificates \
+    build-essential
 
 function build_git {
   repo=$1
