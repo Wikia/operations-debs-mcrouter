@@ -1,3 +1,9 @@
+mcrouter (0.41.0-2) bullseye-wikimedia; urgency=medium
+
+  * Rebuild for Debian Bullseye.
+
+ -- Arturo Borrero Gonzalez <aborrero@wikimedia.org>  Fri, 04 Feb 2022 11:35:00 +0200
+
 mcrouter (0.41.0-1) buster-wikimedia; urgency=medium
 
   * Upgrade upstream to 0.41.0
