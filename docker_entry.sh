@@ -7,7 +7,7 @@ dir=/var/tmp/tmp.AJvPCDTbXG
 shared_dir="/build"
 pkg_dir="${dir}/pkgs"
 install_dir="${dir}/install"
-mcrouter_version="v0.41.0-release"
+mcrouter_version="v2022.01.31.00"
 parallel="-j$(grep processor /proc/cpuinfo | wc -l)"
 
 export LDFLAGS="-L${install_dir}/lib -ldl -ljemalloc $LDFLAGS"
@@ -115,10 +115,6 @@ build_git https://github.com/facebookincubator/fizz \
 
 build_git https://github.com/facebook/wangle \
   "$(<${mcrouter_base}/WANGLE_COMMIT)" "-DBUILD_TESTS=OFF" "." "wangle/wangle"
-
-build_git https://github.com/rsocket/rsocket-cpp \
-  "" "-DBUILD_BENCHMARKS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF" ".." \
-  "rsocket-cpp/build" "-fPIC"
 
 build_git https://github.com/facebook/fbthrift \
   "$(<${mcrouter_base}/FBTHRIFT_COMMIT)" "" ".."  "fbthrift/build" "-fPIC"

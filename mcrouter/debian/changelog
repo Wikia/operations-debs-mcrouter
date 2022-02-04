@@ -1,6 +1,6 @@
-mcrouter (0.41.0-2) bullseye-wikimedia; urgency=medium
+mcrouter (2022.01.31.00-1) bullseye-wikimedia; urgency=medium
 
-  * Rebuild for Debian Bullseye.
+  * Bump version for Debian Bullseye.
 
  -- Arturo Borrero Gonzalez <aborrero@wikimedia.org>  Fri, 04 Feb 2022 11:35:00 +0200
 
