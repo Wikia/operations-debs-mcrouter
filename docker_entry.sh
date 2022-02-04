@@ -8,6 +8,7 @@ shared_dir="/build"
 pkg_dir="${dir}/pkgs"
 install_dir="${dir}/install"
 mcrouter_version="v0.41.0-release"
+parallel="-j$(grep processor /proc/cpuinfo | wc -l)"
 
 export LDFLAGS="-L${install_dir}/lib -ldl -ljemalloc $LDFLAGS"
 export CPPFLAGS="-I${install_dir}/include $CPPFLAGS"
@@ -39,12 +40,12 @@ function build_git {
 
   mkdir -p "${pkg_dir}/${build_dir}"
   pushd "${pkg_dir}/${build_dir}"
-  cmake_args="${cmake_extra} -DCMAKE_INSTALL_PREFIX=${install_dir}"
+  cmake_args="${cmake_extra} -DCMAKE_INSTALL_PREFIX=${install_dir} ${parallel}"
   CXXFLAGS="$CXXFLAGS ${cxxflags}" \
     LD_LIBRARY_PATH="$install_dir/lib:$LD_LIBRARY_PATH" \
     LD_RUN_PATH="$install_dir/lib:$LD_RUN_PATH" \
     cmake ${cmake_args} "${cmake_dir}"
-  make
+  make ${parallel}
   make install
   popd
 }
@@ -61,7 +62,7 @@ function build_mcrouter {
     CPPFLAGS="-I${install_dir}/include $CPPFLAGS" \
     FBTHRIFT_BIN="${install_dir}/bin/" \
     ./configure --prefix="${shared_dir}/mcrouter"
-  make
+  make ${parallel}
   make install
   popd
 }
