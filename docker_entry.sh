@@ -26,7 +26,7 @@ apt-get install -y \
     g++ \
     gcc \
     git \
-    libboost1.74-all-dev \
+    libboost1.65-all-dev \
     libbz2-dev \
     libdouble-conversion-dev \
     libevent-dev \
