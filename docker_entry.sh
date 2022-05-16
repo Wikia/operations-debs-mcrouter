@@ -8,7 +8,7 @@ shared_dir="/build"
 pkg_dir="${dir}/pkgs"
 install_dir="${dir}/install"
 fmtlib_version="8.1.1"
-mcrouter_version="v2022.01.31.00"
+mcrouter_version="v2022.05.09.00"
 parallel="-j$(grep processor /proc/cpuinfo | wc -l)"
 
 export LDFLAGS="-L${install_dir}/lib -ldl -ljemalloc $LDFLAGS"
@@ -111,16 +111,16 @@ build_git https://github.com/fmtlib/fmt \
   "${fmtlib_version}" "" ".." "fmt/fmt" "-fPIC"
 
 build_git https://github.com/facebook/folly \
-  "$(<${mcrouter_base}/FOLLY_COMMIT)" "" ".." "folly/folly" "-fPIC"
+  "${mcrouter_version}" "" ".." "folly/folly" "-fPIC"
 
 build_git https://github.com/facebookincubator/fizz \
-  "$(<${mcrouter_base}/FIZZ_COMMIT)" "-DBUILD_TESTS=OFF" "." "fizz/fizz"
+  "${mcrouter_version}" "-DBUILD_TESTS=OFF" "." "fizz/fizz"
 
 build_git https://github.com/facebook/wangle \
-  "$(<${mcrouter_base}/WANGLE_COMMIT)" "-DBUILD_TESTS=OFF" "." "wangle/wangle"
+  "${mcrouter_version}" "-DBUILD_TESTS=OFF" "." "wangle/wangle"
 
 build_git https://github.com/facebook/fbthrift \
-  "$(<${mcrouter_base}/FBTHRIFT_COMMIT)" "" ".."  "fbthrift/build" "-fPIC"
+  "${mcrouter_version}" "" ".."  "fbthrift/build" "-fPIC"
 
 build_mcrouter "${mcrouter_version}"
 
