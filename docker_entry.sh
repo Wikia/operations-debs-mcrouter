@@ -7,6 +7,7 @@ dir=/var/tmp/tmp.AJvPCDTbXG
 shared_dir="/build"
 pkg_dir="${dir}/pkgs"
 install_dir="${dir}/install"
+fmtlib_version="8.1.1"
 mcrouter_version="v2022.01.31.00"
 parallel="-j$(grep processor /proc/cpuinfo | wc -l)"
 
@@ -41,7 +42,6 @@ apt-get install -y \
     libssl-dev \
     libtool \
     libunwind8-dev \
-    libfmt-dev \
     zlib1g-dev \
     libzstd-dev \
     make \
@@ -106,6 +106,9 @@ pushd "${pkg_dir}/mcrouter"
 popd
 
 mcrouter_base="${pkg_dir}/mcrouter/mcrouter"
+
+build_git https://github.com/fmtlib/fmt \
+  "${fmtlib_version}" "" ".." "fmt/fmt" "-fPIC"
 
 build_git https://github.com/facebook/folly \
   "$(<${mcrouter_base}/FOLLY_COMMIT)" "" ".." "folly/folly" "-fPIC"
