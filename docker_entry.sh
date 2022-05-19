@@ -3,7 +3,9 @@
 set -ex
 
 mcrouter_version="v2022.05.09.00"
+fb_zstd_version="v1.5.2"
 fmtlib_version="8.1.1"
+googletest_version="v1.10.x"
 
 # limit the number of parallel compilation processes to avoid OOM crashes
 parallel_cap=4
@@ -109,13 +111,13 @@ popd
 mcrouter_base="${pkg_dir}/mcrouter/mcrouter"
 
 build_git https://github.com/google/googletest \
-  "v1.10.x" "" "." "googletest"
+  "${googletest_version}" "" "." "googletest"
 
 build_git https://github.com/fmtlib/fmt \
   "${fmtlib_version}" "" ".." "fmt/fmt" "-fPIC"
 
 build_git https://github.com/facebook/zstd \
-  "v1.5.2" "" "build/cmake" "zstd"
+  "${fb_zstd_version}" "" "build/cmake" "zstd"
 
 build_git https://github.com/facebook/folly \
   "${mcrouter_version}" "" ".." "folly/folly" "-fPIC"
