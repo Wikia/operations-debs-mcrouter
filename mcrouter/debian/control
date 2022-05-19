@@ -1,7 +1,7 @@
 Source: mcrouter
 Section: net
 Priority: optional
-Maintainer: Giuseppe Lavagetto <glavagetto@wikimedia.org>
+Maintainer: OPS <ops-l@wikia-inc.com>
 Standards-Version: 4.5.0
 Homepage: https://github.com/facebook/mcrouter/wiki/
 Build-Depends: debhelper (>= 10)

@@ -2,14 +2,19 @@
 # based of scripts in https://github.com/facebook/mcrouter/tree/master/mcrouter/scripts
 set -ex
 
+mcrouter_version="v2022.05.09.00"
+fmtlib_version="8.1.1"
+
+# limit the number of parallel compilation processes to avoid OOM crashes
+parallel_cap=4
+
 #dir=$(mktemp -d  -p /var/tmp)
 dir=/var/tmp/tmp.AJvPCDTbXG
 shared_dir="/build"
 pkg_dir="${dir}/pkgs"
 install_dir="${dir}/install"
-fmtlib_version="8.1.1"
-mcrouter_version="v2022.05.09.00"
-parallel="-j$(grep processor /proc/cpuinfo | wc -l)"
+cores=$(grep processor /proc/cpuinfo | wc -l)
+parallel="-j$(($cores>$parallel_cap ? $parallel_cap : $cores))"
 
 export LDFLAGS="-L${install_dir}/lib -ldl -ljemalloc $LDFLAGS"
 export CPPFLAGS="-I${install_dir}/include $CPPFLAGS"
@@ -43,7 +48,6 @@ apt-get install -y \
     libtool \
     libunwind8-dev \
     zlib1g-dev \
-    libzstd-dev \
     make \
     pkg-config \
     python-dev \
@@ -82,9 +86,6 @@ function build_git {
 }
 
 function build_mcrouter {
-  [ -d "${pkg_dir}/googletest" ] || git clone https://github.com/google/googletest.git
-  mkdir -p ./lib/gtest
-  cp -r -f -t ./lib/gtest "$pkg_dir/googletest/googletest"/*
   pushd "${pkg_dir}/mcrouter/mcrouter"
   autoreconf --install
   LD_LIBRARY_PATH="${install_dir}/lib:$LD_LIBRARY_PATH" \
@@ -107,8 +108,14 @@ popd
 
 mcrouter_base="${pkg_dir}/mcrouter/mcrouter"
 
+build_git https://github.com/google/googletest \
+  "v1.10.x" "" "." "googletest"
+
 build_git https://github.com/fmtlib/fmt \
   "${fmtlib_version}" "" ".." "fmt/fmt" "-fPIC"
+
+build_git https://github.com/facebook/zstd \
+  "v1.5.2" "" "build/cmake" "zstd"
 
 build_git https://github.com/facebook/folly \
   "${mcrouter_version}" "" ".." "folly/folly" "-fPIC"

@@ -1,3 +1,15 @@
+mcrouter (2022.05.09-2) bionic-fandom; urgency=medium
+
+  * Change version to Ubuntu Bionic.
+
+ -- Jacek Mech Wozniak <mech@fandom.com>  Wed, 18 May 2022 19:29:26 +0200
+
+mcrouter (2022.05.09-1) bionic-fandom; urgency=medium
+
+  * Bump the fb tag to 2022.05.09
+
+ -- Jacek Mech Wozniak <mech@fandom.com>  Tue, 10 May 2022 11:33:57 +0200
+
 mcrouter (2022.01.31.00-1) bullseye-wikimedia; urgency=medium
 
   * Bump version for Debian Bullseye.
