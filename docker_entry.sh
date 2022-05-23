@@ -116,11 +116,13 @@ build_git https://github.com/google/googletest \
 build_git https://github.com/fmtlib/fmt \
   "${fmtlib_version}" "" ".." "fmt/fmt" "-fPIC"
 
-build_git https://github.com/facebook/zstd \
-  "${fb_zstd_version}" "" "build/cmake" "zstd"
-
 build_git https://github.com/facebook/folly \
   "${mcrouter_version}" "" ".." "folly/folly" "-fPIC"
+
+# You have build zstd after folly or you're gonna have a bad time
+# (mcrouter's libzstd dependency won't be static and the binary won't work on bionic ¯\_(ツ)_/¯)
+build_git https://github.com/facebook/zstd \
+  "${fb_zstd_version}" "" "build/cmake" "zstd"
 
 build_git https://github.com/facebookincubator/fizz \
   "${mcrouter_version}" "-DBUILD_TESTS=OFF" "." "fizz/fizz"

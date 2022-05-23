@@ -1,3 +1,9 @@
+mcrouter (2022.05.09-4) bionic-fandom; urgency=medium
+
+  * Static libzstd dependency as bionic is stuck on 1.3
+
+ -- Jacek Mech Wozniak <mech@fandom.com>  Mon, 23 May 2022 07:43:49 +0200
+
 mcrouter (2022.05.09-3) bionic-fandom; urgency=medium
 
   * Do not create mcrouter user and service in the deb package
