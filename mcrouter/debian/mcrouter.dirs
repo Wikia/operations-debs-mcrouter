@@ -1,5 +1,4 @@
 etc/mcrouter
-usr/lib/sysusers.d
 var/lib/mcrouter
 var/log/mcrouter
 var/spool/mcrouter

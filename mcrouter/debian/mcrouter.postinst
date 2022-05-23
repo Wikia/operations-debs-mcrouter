@@ -3,12 +3,10 @@
 set -e
 
 if [ "$1" = configure ]; then
-    systemd-sysusers
-    chown mcrouter:mcrouter /var/lib/mcrouter
+    chown mcrouter /var/lib/mcrouter
     chmod 0750 /var/lib/mcrouter
-    chown mcrouter:mcrouter /var/spool/mcrouter
+    chown mcrouter /var/spool/mcrouter
     chmod 0750 /var/spool/mcrouter
-
 fi
 
 #DEBHELPER#

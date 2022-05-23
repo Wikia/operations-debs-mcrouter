@@ -1,3 +1,9 @@
+mcrouter (2022.05.09-3) bionic-fandom; urgency=medium
+
+  * Do not create mcrouter user and service in the deb package
+
+ -- Jacek Mech Wozniak <mech@fandom.com>  Fri, 20 May 2022 16:18:07 +0200
+
 mcrouter (2022.05.09-2) bionic-fandom; urgency=medium
 
   * Change version to Ubuntu Bionic.

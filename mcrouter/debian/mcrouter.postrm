@@ -4,13 +4,7 @@ set -e
 
 case "$1" in
     purge)
-        if [ -x "$(command -v deluser)" ]; then
-           rm -rf /var/spool/mcrouter
-           deluser --quiet --system mcrouter > /dev/null || true
-           deluser --group --system --quiet --only-if-empty mcrouter || true
-        else
-            echo >&2 "not removing mcrouter system account, group and spool files because deluser command was not found"
-        fi
+        rm -rf /var/spool/mcrouter
         ;;
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
         ;;

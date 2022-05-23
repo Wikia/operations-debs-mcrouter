@@ -8,8 +8,7 @@ Build-Depends: debhelper (>= 10)
 
 Package: mcrouter
 Architecture: any
-Depends: adduser,
-         systemd,
+Depends: systemd,
          ${misc:Depends},
          ${shlibs:Depends}
 Description: memcached protocol router

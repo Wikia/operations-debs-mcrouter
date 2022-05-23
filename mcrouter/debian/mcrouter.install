@@ -1,3 +1,2 @@
 bin/mcpiper usr/bin
 bin/mcrouter usr/bin
-debian/sysusers/mcrouter.conf usr/lib/sysusers.d
