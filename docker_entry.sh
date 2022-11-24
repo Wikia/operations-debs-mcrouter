@@ -19,7 +19,9 @@ cores=$(grep processor /proc/cpuinfo | wc -l)
 parallel="-j$(($cores>$parallel_cap ? $parallel_cap : $cores))"
 
 export LDFLAGS="-L${install_dir}/lib -ldl -ljemalloc $LDFLAGS"
-export CPPFLAGS="-I${install_dir}/include $CPPFLAGS"
+export CPPFLAGS="-I${install_dir}/include -O2 -ftree-vectorize -pipe -g $CPPFLAGS"
+export CXXFLAGS="${CPPFLAGS}"
+export CFLAGS="${CFLAGS}"
 
 apt-get update
 
@@ -110,11 +112,12 @@ popd
 
 mcrouter_base="${pkg_dir}/mcrouter/mcrouter"
 
+build_git https://github.com/fmtlib/fmt \
+  "${fmtlib_version}" "-DFMT_TEST=0" ".." "fmt/fmt" "-fPIC"
+
+# Prepare Googletest for mcrouter itself, after fmtlib since that one ships its own via a submodule.
 build_git https://github.com/google/googletest \
   "${googletest_version}" "" "." "googletest"
-
-build_git https://github.com/fmtlib/fmt \
-  "${fmtlib_version}" "" ".." "fmt/fmt" "-fPIC"
 
 build_git https://github.com/facebook/folly \
   "${mcrouter_version}" "" ".." "folly/folly" "-fPIC"
