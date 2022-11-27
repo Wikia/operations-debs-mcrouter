@@ -1,3 +1,9 @@
+mcrouter (2022.05.09-5) bionic-fandom; urgency=medium
+
+  * Specify optimization flags for compilation
+
+ -- Mate Szabo <mszabo@fandom.com>  Thu, 24 Nov 2022 13:22:44 +0100
+
 mcrouter (2022.05.09-4) bionic-fandom; urgency=medium
 
   * Static libzstd dependency as bionic is stuck on 1.3
