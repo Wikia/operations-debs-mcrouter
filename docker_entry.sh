@@ -2,10 +2,10 @@
 # based of scripts in https://github.com/facebook/mcrouter/tree/master/mcrouter/scripts
 set -ex
 
-mcrouter_version="v2022.05.09.00"
-fb_zstd_version="v1.5.2"
-fmtlib_version="8.1.1"
-googletest_version="v1.10.x"
+mcrouter_version="v2023.02.13.00"
+fb_zstd_version="v1.5.4"
+fmtlib_version="9.1.0"
+googletest_version="v1.13.0"
 
 # limit the number of parallel compilation processes to avoid OOM crashes
 parallel_cap=4
@@ -35,7 +35,7 @@ apt-get install -y \
     g++ \
     gcc \
     git \
-    libboost1.65-all-dev \
+    libboost-all-dev \
     libbz2-dev \
     libdouble-conversion-dev \
     libevent-dev \
@@ -50,12 +50,16 @@ apt-get install -y \
     libsodium-dev \
     libssl-dev \
     libtool \
-    libunwind8-dev \
+    libunwind-dev \
     zlib1g-dev \
     make \
     pkg-config \
-    python-dev \
-    python-six \
+    python3-dev \
+    python-is-python3 \
+    python-dev-is-python3 \
+    python3-distutils \
+    python3-setuptools \
+    python3-six \
     dpkg-dev \
     debhelper \
     ragel \
@@ -79,7 +83,7 @@ function build_git {
 
   mkdir -p "${pkg_dir}/${build_dir}"
   pushd "${pkg_dir}/${build_dir}"
-  cmake_args="${cmake_extra} -DCMAKE_INSTALL_PREFIX=${install_dir} ${parallel}"
+  cmake_args="${cmake_extra} -DCMAKE_INSTALL_PREFIX=${install_dir}"
   CXXFLAGS="$CXXFLAGS ${cxxflags}" \
     LD_LIBRARY_PATH="$install_dir/lib:$LD_LIBRARY_PATH" \
     LD_RUN_PATH="$install_dir/lib:$LD_RUN_PATH" \
@@ -92,6 +96,8 @@ function build_git {
 function build_mcrouter {
   pushd "${pkg_dir}/mcrouter/mcrouter"
   autoreconf --install
+  # distutils is deprecated and the warning message breaks ./configure
+  sed -i 's/PYTHON -c /PYTHON -W ignore::DeprecationWarning -c /g' configure
   LD_LIBRARY_PATH="${install_dir}/lib:$LD_LIBRARY_PATH" \
     LD_RUN_PATH="${install_dir}/lib:$LD_RUN_PATH" \
     LDFLAGS="-L${install_dir}/lib $LDFLAGS" \
