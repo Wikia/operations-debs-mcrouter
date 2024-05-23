@@ -1,0 +1,49 @@
+diff --git a/mcrouter/Makefile.am b/mcrouter/Makefile.am
+index b25494a2..f24729af 100644
+--- a/mcrouter/Makefile.am
++++ b/mcrouter/Makefile.am
+@@ -135,7 +135,11 @@ libmcroutercore_a_SOURCES = \
+   routes/FailoverRoute-inl.h \
+   routes/FailoverRoute.h \
+   routes/FailoverWithExptimeRouteFactory.h \
++  routes/HashStopAllowListRoute.h \
++  routes/HashStopAllowListRoute.cpp \
+   routes/HostIdRouteFactory.h \
++  routes/KeyParseRoute.h \
++  routes/KeyParseRoute.cpp \
+   routes/KeySplitRoute-inl.h \
+   routes/KeySplitRoute.h \
+   routes/L1L2CacheRouteFactory.h \
+@@ -254,6 +258,7 @@ mcrouter_LDADD = \
+   libmcroutercore.a \
+   lib/libmcrouter.a \
+   -lthriftcpp2 \
++  -lserverdbginfo \
+   -ltransport \
+   -lthriftanyrep \
+   -lthrifttype \
+diff --git a/mcrouter/configure.ac b/mcrouter/configure.ac
+index 3e217b05..0257f787 100644
+--- a/mcrouter/configure.ac
++++ b/mcrouter/configure.ac
+@@ -54,7 +54,7 @@ AX_PYTHON_DEVEL()
+ AX_CXX_COMPILE_STDCXX_14([],[mandatory])
+ LT_INIT
+ 
+-CXXFLAGS="-fno-strict-aliasing -std=c++17 $CXXFLAGS"
++CXXFLAGS="-fno-strict-aliasing -std=c++20 $CXXFLAGS"
+ CXXFLAGS="-W -Wall -Wextra -Wno-unused-parameter $CXXFLAGS"
+ CXXFLAGS=" -Wno-missing-field-initializers -Wno-deprecated $CXXFLAGS"
+ CXXFLAGS="-DLIBMC_FBTRACE_DISABLE -DDISABLE_COMPRESSION $CXXFLAGS"
+diff --git a/mcrouter/lib/network/test/Makefile.am b/mcrouter/lib/network/test/Makefile.am
+index d858ae6f..44959cb2 100644
+--- a/mcrouter/lib/network/test/Makefile.am
++++ b/mcrouter/lib/network/test/Makefile.am
+@@ -17,6 +17,7 @@ mock_mc_server_CPPFLAGS = -I$(top_srcdir)/..
+ mock_mc_server_LDADD = \
+ 	$(top_builddir)/lib/libmcrouter.a \
+ 	-lthriftcpp2 \
++  -lserverdbginfo \
+ 	-ltransport \
+   -lthriftanyrep \
+ 	-lthrifttype \

@@ -1,3 +1,10 @@
+mcrouter (2024.06.10-1) jammy-fandom; urgency=medium
+
+  * Update to mcrouter 2024.06.10
+  * Update dependencies
+
+ -- Mate Szabo <mszabo@fandom.com>  Tue, 18 Jun 2024 11:22:29 +0000
+
 mcrouter (2023.02.16-1) jammy-fandom; urgency=medium
 
   * Change the version to Ubuntu Jammy

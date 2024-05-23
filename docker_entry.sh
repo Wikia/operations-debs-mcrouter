@@ -2,16 +2,17 @@
 # based of scripts in https://github.com/facebook/mcrouter/tree/master/mcrouter/scripts
 set -ex
 
-mcrouter_version="v2023.02.13.00"
-fb_zstd_version="v1.5.4"
-fmtlib_version="9.1.0"
-googletest_version="v1.13.0"
+mcrouter_version="v2024.06.10.00"
+fbthrift_version="v2024.06.17.00"
+fb_zstd_version="v1.5.6"
+fmtlib_version="10.2.1"
+googletest_version="v1.14.0"
 
 # limit the number of parallel compilation processes to avoid OOM crashes
 parallel_cap=4
 
 #dir=$(mktemp -d  -p /var/tmp)
-dir=/var/tmp/tmp.AJvPCDTbXG
+dir="/var/tmp/tmp.AJvPCDTbXG"
 shared_dir="/build"
 pkg_dir="${dir}/pkgs"
 install_dir="${dir}/install"
@@ -33,7 +34,6 @@ apt-get install -y \
     cmake \
     flex \
     g++ \
-    gcc \
     git \
     libboost-all-dev \
     libbz2-dev \
@@ -95,14 +95,16 @@ function build_git {
 
 function build_mcrouter {
   pushd "${pkg_dir}/mcrouter/mcrouter"
+  patch -d .. -p1 < "${shared_dir}/mcrouter-2024.06.17.patch"
   autoreconf --install
-  # distutils is deprecated and the warning message breaks ./configure
-  sed -i 's/PYTHON -c /PYTHON -W ignore::DeprecationWarning -c /g' configure
+
   LD_LIBRARY_PATH="${install_dir}/lib:$LD_LIBRARY_PATH" \
     LD_RUN_PATH="${install_dir}/lib:$LD_RUN_PATH" \
     LDFLAGS="-L${install_dir}/lib $LDFLAGS" \
     CPPFLAGS="-I${install_dir}/include $CPPFLAGS" \
     FBTHRIFT_BIN="${install_dir}/bin/" \
+    INSTALL_DIR="${install_dir}" \
+    PYTHONWARNINGS="ignore::DeprecationWarning" \
     ./configure --prefix="${shared_dir}/mcrouter"
   make ${parallel}
   make install
@@ -139,8 +141,11 @@ build_git https://github.com/facebookincubator/fizz \
 build_git https://github.com/facebook/wangle \
   "${mcrouter_version}" "-DBUILD_TESTS=OFF" "." "wangle/wangle"
 
+build_git https://github.com/facebook/mvfst \
+  "${mcrouter_version}" "-DBUILD_TESTS=OFF" "." "mvfst" "-fPIC"
+
 build_git https://github.com/facebook/fbthrift \
-  "${mcrouter_version}" "" ".."  "fbthrift/build" "-fPIC"
+  "${fbthrift_version}" "" ".."  "fbthrift/build" "-fPIC"
 
 build_mcrouter "${mcrouter_version}"
 
