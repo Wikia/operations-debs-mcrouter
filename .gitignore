@@ -10,3 +10,5 @@ mcrouter/debian/mcrouter/
 *debhelper*
 mcrouter/debian/mcrouter.substvars
 mcrouter/debian/files
+
+build.log
