@@ -57,7 +57,6 @@ apt-get install -y \
     python3-dev \
     python-is-python3 \
     python-dev-is-python3 \
-    python3-distutils \
     python3-setuptools \
     python3-six \
     dpkg-dev \
