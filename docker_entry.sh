@@ -2,10 +2,9 @@
 # based of scripts in https://github.com/facebook/mcrouter/tree/master/mcrouter/scripts
 set -ex
 
-mcrouter_version="v2023.02.13.00"
-fb_zstd_version="v1.5.4"
-fmtlib_version="9.1.0"
-googletest_version="v1.13.0"
+mcrouter_version="v2026.08.10.00"
+fmtlib_version="11.0.2"
+fast_float_version="v8.0.2"
 
 # limit the number of parallel compilation processes to avoid OOM crashes
 parallel_cap=4
@@ -23,47 +22,8 @@ export CPPFLAGS="-I${install_dir}/include -O2 -ftree-vectorize -pipe -g $CPPFLAG
 export CXXFLAGS="${CPPFLAGS}"
 export CFLAGS="${CFLAGS}"
 
-apt-get update
-
-# could create an image with these preloaded
-apt-get install -y \
-    autoconf \
-    binutils-dev \
-    bison \
-    cmake \
-    flex \
-    g++ \
-    gcc \
-    git \
-    libboost-all-dev \
-    libbz2-dev \
-    libdouble-conversion-dev \
-    libevent-dev \
-    libgflags-dev \
-    libgtest-dev \
-    libgoogle-glog-dev \
-    libjemalloc-dev \
-    liblz4-dev \
-    liblzma-dev \
-    liblzma5 \
-    libsnappy-dev \
-    libsodium-dev \
-    libssl-dev \
-    libtool \
-    libunwind-dev \
-    zlib1g-dev \
-    make \
-    pkg-config \
-    python3-dev \
-    python-is-python3 \
-    python-dev-is-python3 \
-    python3-setuptools \
-    python3-six \
-    dpkg-dev \
-    debhelper \
-    ragel \
-    ca-certificates \
-    build-essential
+export DEBIAN_FRONTEND=noninteractive
+export TZ=Etc/UTC
 
 function build_git {
   repo=$1
@@ -82,7 +42,7 @@ function build_git {
 
   mkdir -p "${pkg_dir}/${build_dir}"
   pushd "${pkg_dir}/${build_dir}"
-  cmake_args="${cmake_extra} -DCMAKE_INSTALL_PREFIX=${install_dir}"
+  cmake_args="${cmake_extra} -DCMAKE_INSTALL_PREFIX=${install_dir} -DCMAKE_POLICY_VERSION_MINIMUM=3.10 -DCMAKE_INCLUDE_PATH=${install_dir}/include -DCMAKE_LIBRARY_PATH=${install_dir}/lib"
   CXXFLAGS="$CXXFLAGS ${cxxflags}" \
     LD_LIBRARY_PATH="$install_dir/lib:$LD_LIBRARY_PATH" \
     LD_RUN_PATH="$install_dir/lib:$LD_RUN_PATH" \
@@ -109,39 +69,68 @@ function build_mcrouter {
 }
 
 mkdir -p "${pkg_dir}" "${install_dir}"
-pushd "${pkg_dir}"
-[ -d "${pkg_dir}/mcrouter" ] || git clone https://github.com/facebook/mcrouter.git
-pushd "${pkg_dir}/mcrouter"
-[ -z "${mcrouter_version}" ] || git checkout "${mcrouter_version}"
-popd
 
-mcrouter_base="${pkg_dir}/mcrouter/mcrouter"
+STEP=${1:-all}
 
-build_git https://github.com/fmtlib/fmt \
-  "${fmtlib_version}" "-DFMT_TEST=0" ".." "fmt/fmt" "-fPIC"
-
-# Prepare Googletest for mcrouter itself, after fmtlib since that one ships its own via a submodule.
-build_git https://github.com/google/googletest \
-  "${googletest_version}" "" "." "googletest"
-
-build_git https://github.com/facebook/folly \
-  "${mcrouter_version}" "" ".." "folly/folly" "-fPIC"
-
-# You have build zstd after folly or you're gonna have a bad time
-# (mcrouter's libzstd dependency won't be static and the binary won't work on bionic ¯\_(ツ)_/¯)
-build_git https://github.com/facebook/zstd \
-  "${fb_zstd_version}" "" "build/cmake" "zstd"
-
-build_git https://github.com/facebookincubator/fizz \
-  "${mcrouter_version}" "-DBUILD_TESTS=OFF" "." "fizz/fizz"
-
-build_git https://github.com/facebook/wangle \
-  "${mcrouter_version}" "-DBUILD_TESTS=OFF" "." "wangle/wangle"
-
-build_git https://github.com/facebook/fbthrift \
-  "${mcrouter_version}" "" ".."  "fbthrift/build" "-fPIC"
-
-build_mcrouter "${mcrouter_version}"
-
-pushd "${shared_dir}/mcrouter"
-dpkg-buildpackage -us -uc
+case $STEP in
+  fmt)
+    cd "${pkg_dir}"
+    build_git https://github.com/fmtlib/fmt \
+      "${fmtlib_version}" "-DFMT_TEST=0" ".." "fmt/fmt" "-fPIC"
+    ;;
+  fast_float)
+    cd "${pkg_dir}"
+    build_git https://github.com/fastfloat/fast_float \
+      "${fast_float_version}" "" ".." "fast_float/build"
+    ;;
+  folly)
+    cd "${pkg_dir}"
+    build_git https://github.com/facebook/folly \
+      "" "" ".." "folly/folly" "-fPIC"
+    ;;
+  fizz)
+    cd "${pkg_dir}"
+    build_git https://github.com/facebookincubator/fizz \
+      "" "-DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF" "." "fizz/fizz"
+    ;;
+  wangle)
+    cd "${pkg_dir}"
+    build_git https://github.com/facebook/wangle \
+      "" "-DBUILD_TESTS=OFF" "." "wangle/wangle"
+    ;;
+  mvfst)
+    cd "${pkg_dir}"
+    build_git https://github.com/facebook/mvfst \
+      "" "-DBUILD_TESTS=OFF" "."
+    ;;
+  fbthrift)
+    cd "${pkg_dir}"
+    build_git https://github.com/facebook/fbthrift \
+      "" "" ".." "fbthrift/build" "-fPIC"
+    ;;
+  mcrouter)
+    cd "${pkg_dir}"
+    [ -d mcrouter ] || git clone https://github.com/facebook/mcrouter.git
+    pushd mcrouter
+    [ -z "${mcrouter_version}" ] || git checkout "${mcrouter_version}"
+    popd
+    build_mcrouter
+    cd "${shared_dir}/mcrouter"
+    dpkg-buildpackage -us -uc
+    ;;
+  all)
+    "$0" fmt
+    "$0" fast_float
+    "$0" folly
+    "$0" fizz
+    "$0" wangle
+    "$0" mvfst
+    "$0" fbthrift
+    "$0" mcrouter
+    ;;
+  *)
+    echo "Unknown step: $STEP" >&2
+    echo "Valid steps: fmt fast_float folly fizz wangle mvfst fbthrift mcrouter all" >&2
+    exit 1
+    ;;
+esac
