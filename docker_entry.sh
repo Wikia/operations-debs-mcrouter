@@ -7,7 +7,7 @@ fmtlib_version="11.0.2"
 fast_float_version="v8.0.2"
 
 # limit the number of parallel compilation processes to avoid OOM crashes
-parallel_cap=4
+parallel_cap=50
 
 #dir=$(mktemp -d  -p /var/tmp)
 dir=/var/tmp/tmp.AJvPCDTbXG
@@ -62,6 +62,7 @@ function build_mcrouter {
     LDFLAGS="-L${install_dir}/lib $LDFLAGS" \
     CPPFLAGS="-I${install_dir}/include $CPPFLAGS" \
     FBTHRIFT_BIN="${install_dir}/bin/" \
+    INSTALL_DIR="${install_dir}" \
     ./configure --prefix="${shared_dir}/mcrouter"
   make ${parallel}
   make install
@@ -108,12 +109,19 @@ case $STEP in
     build_git https://github.com/facebook/fbthrift \
       "" "" ".." "fbthrift/build" "-fPIC"
     ;;
-  mcrouter)
+  mvfst_clone)
+    cd "${pkg_dir}"
+    [ -d mvfst ] || git clone https://github.com/facebook/mvfst
+    ;;
+  mcrouter_clone)
     cd "${pkg_dir}"
     [ -d mcrouter ] || git clone https://github.com/facebook/mcrouter.git
     pushd mcrouter
     [ -z "${mcrouter_version}" ] || git checkout "${mcrouter_version}"
     popd
+    ;;
+  mcrouter)
+    cd "${pkg_dir}"
     build_mcrouter
     cd "${shared_dir}/mcrouter"
     dpkg-buildpackage -us -uc

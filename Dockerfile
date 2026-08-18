@@ -46,7 +46,13 @@ RUN /docker_entry.sh fast_float
 RUN /docker_entry.sh folly
 RUN /docker_entry.sh fizz
 RUN /docker_entry.sh wangle
+RUN /docker_entry.sh mvfst_clone
+COPY patch_mvfst.sh /patch_mvfst.sh
+RUN bash /patch_mvfst.sh
 RUN /docker_entry.sh mvfst
 RUN /docker_entry.sh fbthrift
+RUN /docker_entry.sh mcrouter_clone
 COPY mcrouter/ /build/mcrouter/
+COPY patch_mcrouter.sh /patch_mcrouter.sh
+RUN bash /patch_mcrouter.sh
 RUN /docker_entry.sh mcrouter
